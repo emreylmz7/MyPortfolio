@@ -1,0 +1,101 @@
+.contact-container {
+  padding: 8% 20%;
+  text-align: left;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .contact-content {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #5000ca, #8c00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .contact-description {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      
+      .dark-mode & {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .light-mode & {
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    .MuiBox-root {
+      max-width: 1300px;
+    }
+
+    .MuiButton-root {
+      color: #fff;
+    }
+  }
+
+  // Form hata mesajları için stil
+  .MuiFormHelperText-root {
+    &.Mui-error {
+      background-color: rgba(211, 47, 47, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+  }
+
+  // Light/Dark mode için metin renkleri
+  .light-mode & {
+    p, h1, h2, h3, h4, h5, label {
+      color: #000;
+    }
+  }
+
+  .dark-mode & {
+    p, h1, h2, h3, h4, h5, label {
+      color: #fff;
+    }
+  }
+}
+
+// Responsive tasarım
+@media screen and (max-width: 768px) {
+  .contact-container {
+    padding: 20% 5%;
+    
+    .contact-content {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .contact-description {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+// Animasyonlar
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-content {
+  animation: fadeIn 0.8s ease-out;
+}
