@@ -23,32 +23,46 @@ function App() {
     useEffect(() => {
         const loadImages = async () => {
             try {
+                // Sayfa içeriğinin yüklenmesi için kısa bir bekleme
+                await new Promise(resolve => setTimeout(resolve, 100));
+
                 // Sayfadaki tüm img etiketlerini al
                 const images = document.getElementsByTagName('img');
+                
+                if (images.length === 0) {
+                    setIsLoading(false);
+                    return;
+                }
+
                 const imagePromises = Array.from(images).map(img => {
-                    if (img.complete) {
+                    // Eğer resim zaten yüklenmişse veya src boşsa
+                    if (img.complete || !img.src) {
                         return Promise.resolve();
                     }
-                    return new Promise((resolve, reject) => {
+
+                    return new Promise((resolve) => {
                         img.onload = resolve;
-                        img.onerror = reject;
+                        img.onerror = resolve; // Hata durumunda da devam et
+                        
+                        // Timeout ekle - 5 saniye sonra resolve et
+                        setTimeout(resolve, 5000);
                     });
                 });
 
-                // Tüm resimlerin yüklenmesini bekle
                 await Promise.all(imagePromises);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Resim yüklenirken hata oluştu:', error);
-                setIsLoading(false); // Hata durumunda da spinner'ı kaldır
+                setIsLoading(false);
             }
         };
 
-        // Sayfa yüklendiğinde resimleri kontrol et
-        window.addEventListener('load', loadImages);
-        
+        // Doğrudan loadImages'i çağır
+        loadImages();
+
+        // Temizleme işlevi
         return () => {
-            window.removeEventListener('load', loadImages);
+            setIsLoading(false);
         };
     }, []);
 
