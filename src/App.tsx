@@ -14,30 +14,42 @@ import Spinner from './components/Spinner';
 
 function App() {
     const [mode, setMode] = useState<string>('dark');
-    const [isLoading, setIsLoading] = useState(true); // Yükleme durumu
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleModeChange = () => {
         setMode(mode === 'dark' ? 'light' : 'dark');
     };
 
     useEffect(() => {
-        const images = Array.from(document.images); // Sayfadaki tüm img etiketlerini alın
-        const imagePromises = images.map((img) => 
-            new Promise((resolve) => {
-                if (img.complete) {
-                    resolve(true);
-                } else {
-                    img.onload = () => resolve(true);
-                    img.onerror = () => resolve(true);
-                }
-            })
-        );
+        const loadImages = async () => {
+            try {
+                // Sayfadaki tüm img etiketlerini al
+                const images = document.getElementsByTagName('img');
+                const imagePromises = Array.from(images).map(img => {
+                    if (img.complete) {
+                        return Promise.resolve();
+                    }
+                    return new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    });
+                });
 
-        Promise.all(imagePromises).then(() => {
-            setIsLoading(false); // Tüm görseller yüklendi
-        });
+                // Tüm resimlerin yüklenmesini bekle
+                await Promise.all(imagePromises);
+                setIsLoading(false);
+            } catch (error) {
+                console.error('Resim yüklenirken hata oluştu:', error);
+                setIsLoading(false); // Hata durumunda da spinner'ı kaldır
+            }
+        };
 
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        // Sayfa yüklendiğinde resimleri kontrol et
+        window.addEventListener('load', loadImages);
+        
+        return () => {
+            window.removeEventListener('load', loadImages);
+        };
     }, []);
 
     return (
